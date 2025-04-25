@@ -143,11 +143,8 @@ const startScan = async () => {
       audio: false,
       video: {
         facingMode: props.useFrontCamera ? 'user' : 'environment',
-        width: { ideal: window.screen.width },
-        height: { ideal: window.screen.height },
       }
     }
-
     // 如果选择了特定摄像头，使用deviceId
     if (selectedCamera.value) {
       (constraints.video as MediaTrackConstraints).deviceId = selectedCamera.value
@@ -328,12 +325,6 @@ const initScan = async () => {
   }
 }
 
-// 监听键盘事件
-const handleKeyDown = (e: KeyboardEvent) => {
-  if (e.key === 'Escape' && isVisible.value) {
-    cancel()
-  }
-}
 
 // 显示扫码组件
 const show = async () => {
@@ -350,7 +341,6 @@ watch(() => route.path, cancel)
 
 // 组件挂载时
 onMounted(() => {
-  document.addEventListener('keydown', handleKeyDown)
   if (isVisible.value) {
     initScan()
   }
@@ -359,7 +349,6 @@ onMounted(() => {
 // 组件卸载时
 onUnmounted(() => {
   Worker.terminate()
-  document.removeEventListener('keydown', handleKeyDown)
   stopScan()
   stopMediaStream()
 })

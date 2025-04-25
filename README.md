@@ -13,6 +13,10 @@
 - Axios (网络请求)
 - SCSS
 - PostCSS (pxtorem)
+- VConsole (移动端调试)
+- unplugin-auto-import / unplugin-vue-components (自动导入)
+- @vant/auto-import-resolver (Vant 组件自动导入)
+- Pinia 持久化插件
 
 ## 特性
 - 移动端 rem 适配
@@ -24,18 +28,22 @@
 - 环境变量配置
 - TypeScript 类型支持
 - 路径别名 `@` -> `src`
+- VConsole 移动端调试支持
+- typings 自动生成（`src/typings/auto-import.d.ts`、`src/typings/components.d.ts`）
 
 ## 目录结构
 ```
 src/
 ├── api/                # API 接口
 ├── assets/             # 静态资源
+│   └── styles/         # 全局样式
 ├── components/         # 公共组件
 ├── layout/             # 布局组件
 ├── router/             # 路由配置
 │   └── modules/        # 路由模块
 ├── stores/             # Pinia 状态
 │   └── modules/        # 状态模块
+├── typings/            # 自动生成的类型声明
 ├── utils/              # 工具函数
 │   ├── http.ts         # Axios 封装
 │   └── rem.ts          # rem 适配
@@ -58,7 +66,7 @@ pnpm build
 pnpm preview
 ```
 
-## 关于rem适配
+## 关于 rem 适配
 
 本项目使用 `postcss-pxtorem` 插件自动将 px 转换为 rem。基准值为 37.5px（与 Vant UI 保持一致）。
 
@@ -66,8 +74,26 @@ pnpm preview
 
 如果某些样式不需要转换为 rem，可以添加 `.norem` 类名。
 
+## TailwindCSS
+
+已集成 TailwindCSS 4.x，支持原子化 CSS。tailwind.config.js 已适配 Vant 设计规范，单位均为 rem。默认关闭 preflight，避免与 Vant 样式冲突。
+
+## 自动导入
+
+已集成 `unplugin-auto-import` 和 `unplugin-vue-components`，支持 Vue、Vue Router、Pinia 相关 API 及 Vant 组件的自动导入，无需手动 import。类型声明自动生成于 `src/typings/` 目录。
+
+## VConsole
+
+内置 VConsole，方便移动端调试。
+
 ## 环境变量
 
 项目使用环境变量来区分开发和生产环境：
 - `.env.development` - 开发环境配置
 - `.env.production` - 生产环境配置
+
+## 依赖说明
+
+请确保使用 Node.js 18.x，pnpm 7.x 及以上版本。
+
+---

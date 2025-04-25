@@ -1,11 +1,11 @@
 import { createApp } from 'vue'
-import '@/assets/styles/global-clear.css'
-import '@/assets/styles/index.css'
-// import 'vant/lib/index.css'
-import './utils/rem.ts'
 import router from '@/router'
 import { pinia } from '@/stores'
 import App from './App.vue'
+import '@/assets/styles/global-clear.css'
+import '@/assets/styles/tailwind.css'
+import './utils/rem.ts'
+
 
 // 在开发环境中启用 VConsole 调试工具
 if (import.meta.env.DEV) {
@@ -18,6 +18,3 @@ if (import.meta.env.DEV) {
 const app = createApp(App)
 
 app.use(router).use(pinia).mount('#app')
-
-// 
-

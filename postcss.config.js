@@ -1,6 +1,5 @@
-export default {
+export default{
   plugins: {
-    '@tailwindcss/postcss': {},
     autoprefixer: {},
     'postcss-pxtorem': {
       rootValue: 37.5, // Vant 官方根字体大小是37.5

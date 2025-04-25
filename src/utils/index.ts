@@ -13,3 +13,14 @@ export function asyncOnce<T = any>(cb:(...args:any[])=>Promise<T>) {
     }))
   }
 }
+
+// 平台判断，Pc | Mobile
+export const isMobile = (): boolean => {
+  
+  const uA = navigator.userAgent.toLowerCase();
+  const uAData = (navigator as any)?.userAgentData?.mobile
+  const isMobileUA = uAData ?? /android|iphone|ipad/i.test(uA);
+  const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 1;
+  
+  return isMobileUA && isTouchDevice;
+};

@@ -3,6 +3,7 @@ import vue from '@vitejs/plugin-vue'
 import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
 import { VantResolver } from '@vant/auto-import-resolver';
+import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -12,7 +13,8 @@ export default defineConfig({
       imports:[
         'vue',
         'vue-router',
-        'pinia'
+        'pinia',
+        '@vueuse/core'
       ],
       resolvers: [VantResolver()],
       dts: 'src/typings/auto-import.d.ts'
@@ -22,6 +24,7 @@ export default defineConfig({
       resolvers: [VantResolver()],
       dts: 'src/typings/components.d.ts'
     }),
+    tailwindcss()
   ],
   resolve: {
     alias: {
@@ -33,7 +36,7 @@ export default defineConfig({
     preprocessorOptions: {
       scss: {
         // 使用 @use 语法代替 @import
-        additionalData: '@use "@/assets/styles/index.scss" as *;',
+        additionalData: '@use "@/assets/styles/variables.scss" as *;',
       },
     },
   },
