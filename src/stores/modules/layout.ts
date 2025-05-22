@@ -1,42 +1,64 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
+import type { NavBarProps } from 'vant'
+import { resetRef } from '@/hooks'
 
-// 自定义 Layout 设置
-// export const useLayoutStore = defineStore('layout',()=>{
-//   const route = useRoute()
-//   const layoutConfig = reactive({
-//     showNavbar: route?.meta?.showNavbar || false,
-//     showTabbar: route?.meta?.showTabbar || false,
-//     oneScreen: route?.meta?.oneScreen || false,
-//     keepAlive: route?.meta?.keepAlive || false
-//   })
-//   watch(()=>route.path,()=>{
-//     const keys = Object.keys(layoutConfig) as Array<keyof typeof layoutConfig>
-//     if(route.meta['keepAlive']){
-//       return layoutConfig['keepAlive'] = route.meta['keepAlive'] || false
-//     }
-//     keys.map((key)=>{
-//       layoutConfig[key] = route.meta[key] || false
-//     })
-//   })
-//   const setLayout = (name:keyof typeof layoutConfig,val?:boolean)=>{
-//     layoutConfig[name] = val ?? !layoutConfig[name]
-//   }
-//   return{
-//     layoutConfig,
-//     setLayout
-//   }
-// })
-
-// 自定义 Navbar 设置
+// NavBar
+type NavbarEvents = {
+  onClickLeft?: (e: MouseEvent) => void
+  onClickRight?: (e: MouseEvent) => void
+}
+type Slot = {
+  title?: ()=> VNode | Component
+  left?: ()=> VNode | Component
+  right?: ()=> VNode | Component
+}
 export const useNavbarStore = defineStore('navbar',()=>{
-  const route = useRoute()
-  const navbarConfig = reactive({
-    titile: route?.meta?.title || import.meta.env.VITE_APP_TITLE,
-    leftArrow: false
+  // 配置
+  const [navConfig, configReset] = resetRef<NavBarProps & NavbarEvents>({
+    fixed: true,
+    border: true,
+    leftDisabled: false,
+    rightDisabled: false,
+    leftArrow: true,
+    placeholder: true,
+    safeAreaInsetTop: false,
+    clickable: true,
   })
+  // 插槽
+  const [slots,slotsReset] = resetRef<Slot>({})
+
+  const route = useRoute()
+  const router = useRouter()
+  watchEffect(()=>{
+    if(route){
+      configReset()
+      slotsReset()
+      navConfig.value = {
+        ...navConfig.value,
+        title: route.meta?.title ?? import.meta.env.VITE_APP_TITLE,
+        onClickLeft: ()=>{
+          router.back()
+        },
+      }
+    }
+  })
+
+  const setNavConfig = (config: Partial<NavBarProps>) => {
+    Object.assign(navConfig.value, config)
+  }
+  const setNavbarSlot = (slot:Slot) => {
+    Object.assign(slots.value, slot)
+  }
+  return {
+    navConfig,
+    slots,
+    setNavConfig,
+    setNavbarSlot,
+  }
 })
+
 // 自定义 Tabbar 类型
 type TabbarName = 'home'|'category'|'cart'|'mine'
 export interface TabbarItem {

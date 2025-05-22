@@ -59,6 +59,10 @@ const oneScreen = computed(() => {
 
   &:has(#app-tabbar) {
     --tabbar-height: var(--van-tabbar-height);
+
+    .main-content {
+      padding-bottom: 0;
+    }
   }
 
   &.one-screen-height {

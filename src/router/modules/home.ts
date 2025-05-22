@@ -8,7 +8,7 @@ const homeRoutes: RouteRecordRaw[] = [
     meta: {
       title: '首页',
       keepAlive: true,
-      showNavbar: true,
+      showNavbar: false,
       showTabbar: true
     }
   },

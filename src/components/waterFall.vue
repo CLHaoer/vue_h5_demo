@@ -1,83 +1,103 @@
 <script setup lang='ts'>
-import { vElementSize } from '@vueuse/components'
-const {gap = 0, list ,...props} = defineProps<{
+import { vResizeObserver } from '@vueuse/components'
+import { loadPlugins } from '@/main';
+const { gap = 0, list, cols = 2 } = defineProps<{
   cols?: number
-  colWidth?: number
-  gap?:number
-  list:any[]
+  gap?: number | [number, number]
+  list: any[]
 }>()
-const container = useTemplateRef<HTMLElement>('waterfallREf')
+const slots = useSlots()
+
+const container = useTemplateRef<HTMLElement>('container')
 const { width } = useElementSize(container)
-const Columns = ref<Array<{
-  items: {id:string,img:string,desc:string}[]
-  height: number
-}>>([])
-const colCount = computed(() => {
-  if(props.cols) return props.cols
-  if(props.colWidth) {
-    return Math.floor(width.value / (props.colWidth + gap))
+const Gap = computed(() => {
+  if (Array.isArray(gap)) {
+    return {
+      col: gap[0],
+      row: gap[1],
+    }
   }
-  return 1
+  return {
+    col: gap,
+    row: gap,
+  }
 })
 const colWidth = computed(() => {
-  if(props.colWidth) return {width: `${props.colWidth}px`}
-  if(props.cols) {
-    return {width: `${(width.value - (props.cols - 1) * gap) / props.cols}px`}
+  if (cols >= 2) {
+    return (width.value - (cols - 1) * Gap.value.col) / cols + 'px'
   }
-  return {width: `100%`}
+  return '100%'
 })
+const Columns = ref<Array<{
+  items: any[]
+  height: number
+}>>([])
+// 初始化列
 const initColumns = () => {
-  Columns.value = Array.from({ length: colCount.value }, () => ({
+  Columns.value = Array.from({ length: cols }, () => ({
     items: [],
     height: 0,
   }))
 }
-const getItemHeight = ({width,height}:{width:number,height:number},item:any)=>{
-  if(item.width && item.height) return
-  // 计算item的高度并更新对应列的高度
-  item.height = height
-  item.width = width
-  distributeItems()
-}
-const distributeItems = () => {
-  if (!list.length) return
+// 获取最短的列
+const getShortestColumn = () => {
+  return Columns.value.reduce((prev, curr) =>
+    prev.height <= curr.height ? prev : curr
+  );
+};
+// 更新各列高度
+const updateColumnHeights = (item: any, col: any) => {
+  if (item._height_) {
+    return col.height += (item._height_ + Gap.value.row)
+  }
+  const dom = document.createElement('div')
+  dom.style.width = colWidth.value
+  const temporary = createApp({
+    render: () => h('div', {}, [slots.default!({ item })])
+  })
+  document.body.appendChild(dom)
+  loadPlugins(temporary).mount(dom)
+  const height = parseFloat(window.getComputedStyle(dom).height)
+  item._height_ = height
+  col.height += (height + Gap.value.row)
+  temporary.unmount()
+  dom.remove()
+};
+// 布局所有元素
+const layout = async () => {
   // 清空现有列并重新初始化
   initColumns()
   // 遍历每个item，分配到对应的列中
-  for (let i = 0; i < list.length; i++) {
-    const item = list[i]
+  list.forEach((item) => {
     // 找到高度最小的列
-    const minColIndex = Columns.value.reduce((minIndex, col, index) => {
-      return col.height < Columns.value[minIndex].height ? index : minIndex
-    }, 0)
+    const shortestColumn = getShortestColumn();
     // 将item添加到对应的列中
-    Columns.value[minColIndex].items.push(item)
+    shortestColumn.items.push(item)
     // 更新列的高度
-    Columns.value[minColIndex].height += item.height || 0
-  }
+    updateColumnHeights(item, shortestColumn)
+  })
 }
-// watchEffect(() => {
-//   // 当list变化时，重新分配items
-//   if (width.value) {
-//     console.log('width',width.value);
-//     distributeItems()
-//   }
-// })
-
-
-onMounted(()=>{
-  initColumns()
-  distributeItems()
+// 处理每个item尺寸变化->重新布局
+const handleResize = async (item: any, entries: readonly ResizeObserverEntry[]) => {
+  const height = entries[0].contentRect.height
+  if (!height || item._height_ === height) return
+  // console.log(height, entries[0].target);
+  await nextTick()
+  item._height_ = height
+  layout()
+}
+watchEffect(() => {
+  if (list.length) {
+    layout()
+  }
 })
-
-
-
 </script>
 
 <template>
-  <div ref="waterfallREf" class="waterfall">
-    <div v-for="Column in Columns" :style="colWidth" class="waterfall-col">
-      <div v-for="(item, index) in Column.items" v-element-size="el=> getItemHeight(el,item)" :key="item.id" class="waterfall-item">
+  <div ref="container" class="waterfall">
+    <div v-for="Column in Columns" class="waterfall-col">
+      <div v-for="(item, index) in Column.items" :key="item.id" v-resize-observer="(e) => handleResize(item, e)"
+        class="waterfall-item">
         <slot :item="item" :index="index" />
       </div>
     </div>
@@ -88,8 +108,18 @@ onMounted(()=>{
 .waterfall {
   display: flex;
   flex-wrap: wrap;
-  gap: v-bind("gap ? gap :0")px;
+  column-gap: v-bind("Gap.col + 'px'");
   justify-content: space-between;
   width: 100%;
+
+  &-col {
+    height: fit-content;
+    width: v-bind(colWidth);
+  }
+
+  &-item {
+    width: 100%;
+    margin-bottom: v-bind("Gap.row + 'px'");
+  }
 }
 </style>

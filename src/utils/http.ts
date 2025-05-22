@@ -83,9 +83,8 @@ http.interceptors.response.use(
   (response: AxiosResponse) => {
     // 移除已完成的请求
     removePendingRequest(response.config)
-    
+    if(!response.data?.data) return response.data
     const { code, message, data } = response.data
-    
     // 根据后端接口规范调整
     if (code === 200) {
       return data

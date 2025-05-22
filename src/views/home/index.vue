@@ -1,116 +1,137 @@
 <script setup lang="ts">
-import type { SwipeInstance } from 'vant';
-const swiper = useTemplateRef<SwipeInstance>('swiper')
-const menus = ref([
-[
-  {
-    name: '喜欢',
-    icon: 'like-o',
-  },
-  {
-    name: '收藏',
-    icon: 'star-o',
-  },
-  {
-    name: '优惠',
-    icon: 'gift-o',
-  },
-  {
-    name: '活动',
-    icon: 'hot-o',
-  },
-  {
-    name: '推荐',
-    icon: 'friends-o',
-  },
-],
-[
-  {
-    name: '设置',
-    icon: 'setting-o',
-  },
-  {
-    name: '关于',
-    icon: 'info-o',
-  },
-  {
-    name: '隐私',
-    icon: 'lock',
-  },
-  {
-    name: 'QQ',
-    icon: 'qq',
-  },
-  {
-    name: '更多',
-    icon: 'more-o',
-  },
-  {
-    name: '分享',
-    icon: 'share-o',
-  },
-  {
-    name: '会员',
-    icon: 'vip-card',
-  },
-  {
-    name: '正在进行',
-    icon: 'underway',
-  },
-  {
-    name: '音乐',
-    icon: 'music',
-  },
-]
-])
-const swiperHeight = ref(62)
-onMounted(()=>{
-  console.log(swiper.value);
+import { useUserStore } from '@/stores'
+import { scanQrCode } from '@/components/scanqrcode'
+import scanSuccess from '@/utils/scanner'
+import { parseAsync } from 'docx-preview';
+import type { UploaderBeforeRead } from 'vant'
+const router = useRouter()
+const { userInfo } = useUserStore()
+// 处理扫码按钮点击
+const handleScan = async () => {
+  try {
+    const result = await scanQrCode({
+      scanWidth: 280,
+      scanHeight: 280,
+      scanFps: 60, // 稍微降低扫描频率，提高兼容性
+      showErrorToast: true, // 自动显示错误提示
+      onError: (error) => {
+        console.warn('扫码错误，但已由组件内部处理:', error.message)
+      }
+    })
+    scanSuccess(result)
+  } catch (error: any) {
+    // 用户取消不需要处理
+    if (error?.message === '用户取消扫码') {
+      return
+    }
+    console.error('扫码过程发生错误:', error)
+  }
+}
+
+const fileList = shallowRef([])
+const beforeRead:UploaderBeforeRead = (file)=>{
+  if(!Array.isArray(file)){
+    const reader = new FileReader()
+    const docxContainer = document.createElement('div')
+    const options = {
+      useBase64URL: true,
+      renderEndnotes: false,
+    }
+    parseAsync(file,options).then((docx) => {
+      console.log('docx:', docx);
+      
+    }).catch((error) => {
+      console.error('Error rendering docx:', error)
+    })
+  }
   
-})
+  return false
+}
 
 </script>
 
 <template>
-  <div class="p-[10px] @container">
-    <van-swipe class="rounded-sm h-[200px]" :autoplay="3000" :show-indicators="false">
-      <van-swipe-item v-for="(item, index) in 3" :key="index">
-        <van-image class="size-full" :src="`https://picsum.photos/350/200?random=${index}`" alt="Image" fit="cover" />
-      </van-swipe-item>
-    </van-swipe>
-    <van-swipe ref="swiper" :height="swiperHeight" class="flex pt-[10px] pb-[20px] w-full bg-gray-100 dark:bg-neutral-900 rounded-sm flex-row gap-x-[34px] mt-[10px] justify-between">
-      <van-swipe-item v-for="(item, index) in menus" :key="index" class="grid grid-cols-5 items-center justify-items-center gap-y-[5px]">
-        <div v-for="(menu,idx) in item" class="flex flex-col items-center justify-center">
-          <van-icon :name="menu.icon" class="!text-[40px] text-[#333] dark:text-gray-100" />
-          <span>{{ menu.name }}</span>
+  <div class="home_container">
+    <van-nav-bar fixed placeholder class="home-navbar" :border="false" safe-area-inset-top>
+      <template #left>
+        <div class="avatar-container" @click="router.push('/mine')">
+          <van-image :src="userInfo?.avatar" fit="cover" round class="avatar-image" />
         </div>
-      </van-swipe-item>
-    </van-swipe>
-    <div class="w-full grid items-center justify-items-center grid-cols-4 grid-rows-2 bg-gray-100 dark:bg-neutral-900 rounded-sm mt-[10px]">
-      <div class="w-full border-b-[0.5px] border-b-neutral-200 p-[10px] col-span-4 flex items-center gap-x-[34px]">
-        <div v-for="idx in 5" :key="idx" class="flex flex-col items-center justify-center gap-y-[5px]">
-          <van-icon name="point-gift" class="!text-[40px] text-[#333] dark:text-gray-100" />
-          <span class="text-[14px] text-[#333] dark:text-gray-100">推荐</span>
+      </template>
+      <template #title>
+        <van-search readonly input-align="center" placeholder="请输入搜索关键词" shape="round" class="search-input"
+          background="transparent" @click="router.push('/search')" />
+      </template>
+      <template #right>
+        <div class="right-icons">
+          <van-icon name="scan" size="25" class="scan-icon" @click="handleScan" />
         </div>
-      </div>
-      <div class=" col-span-2">
-        ssss
-      </div>
-      <div class="w-full flex border-l-[0.5px] p-[10px] border-l-neutral-200 flex-col items-center justify-center gap-y-[5px]">
-        <van-icon name="point-gift" class="!text-[40px] text-[#333] dark:text-gray-100" />
-          <span class="text-[14px] text-[#333] dark:text-gray-100">推荐</span>
-      </div>  
-      <div class="w-full flex border-l-[0.5px] p-[10px] border-l-neutral-200 flex-col items-center justify-center gap-y-[5px]">
-        <van-icon name="point-gift" class="!text-[40px] text-[#333] dark:text-gray-100" />
-          <span class="text-[14px] text-[#333] dark:text-gray-100">推荐</span>
-      </div>
+      </template>
+    </van-nav-bar>
+    <div>
+      <van-uploader v-model="fileList" :before-read="beforeRead" multiple accept="docx/*" />
     </div>
-    <van-list class="w-full mt-[10px]">
-      <van-empty description="暂无数据"/>
-    </van-list>
   </div>
 </template>
 
 <style scoped lang="scss">
+.home_container {
 
+  /* 首页导航栏样式 */
+  .home-navbar {
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+
+    :deep(.van-nav-bar__content) {
+      height: 56px;
+      padding: 0 12px;
+
+      .van-nav-bar__title {
+        width: 70%;
+        font-size: 16px;
+        font-weight: 500;
+      }
+    }
+
+    .avatar-container {
+      display: flex;
+      align-items: center;
+      height: 100%;
+    }
+
+    .avatar-image {
+      width: 34px;
+      height: 34px;
+      border: 1px solid #f5f5f5;
+    }
+
+    /* 搜索框样式 */
+    .search-input {
+      width: 100%;
+      padding: 0;
+
+      :deep(.van-search__content) {
+        background-color: #f5f5f7;
+        border-radius: 30px;
+
+        .van-field__left-icon {
+          position: absolute;
+          margin-left: 22px;
+        }
+      }
+    }
+
+
+    .right-icons {
+      display: flex;
+      align-items: center;
+      height: 100%;
+    }
+
+    .scan-icon {
+      margin-right: 4px;
+      color: #333;
+    }
+  }
+
+}
 </style>

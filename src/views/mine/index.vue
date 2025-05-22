@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { Icon } from 'vant';
+import { useNavbarStore } from '@/stores';
+const { setNavConfig,setNavbarSlot } = useNavbarStore()
 const router = useRouter()
-
 const userInfo = ref({
   avatar: 'https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg',
   nickname: '用户昵称',
@@ -14,7 +16,6 @@ const menuItems = [
   { icon: 'points', text: '我的积分', path: '/points' },
   { icon: 'service-o', text: '联系客服', path: '/service' }
 ]
-
 // 跳转到设置页面
 const goToSetting = () => {
   router.push('/mine/setting')
@@ -32,6 +33,18 @@ const logout = () => {
     // 点击取消
   })
 }
+onActivated(() => {
+  // 设置导航栏
+  setNavConfig({
+    title: '三生三世十里桃花'
+  })
+  setNavbarSlot({
+    right: () => h(Icon,{
+      class:'!text-[red]',
+      name: 'wap-nav',
+    }),
+  })
+})
 </script>
 
 <template>
@@ -97,5 +110,9 @@ const logout = () => {
 
 .menu-group {
   margin-bottom: 16px;
+}
+:deep(.my-icon) {
+  font-size: 24px;
+  color: red;
 }
 </style>

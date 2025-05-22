@@ -1,6 +1,18 @@
 # Vue 3.5 H5 项目模板
 
-这是一个基于 Vue 3.5 + TypeScript + Vite + Vant UI 的移动端 H5 项目模板，已集成了多种实用功能。
+这是一个基于 Vue 3.5 + TypeScript + Vite + Vant UI 的移动端 H5 项目模板，已集成了多种实用功能和最佳实践。本模板旨在提供一个高效、现代化的移动端开发环境，帮助开发者快速启动新项目。
+
+## 在线预览
+[在线演示](https://your-demo-url.com) (开发中)
+
+## 主要功能
+- 📱 移动端优先，完美适配各种屏幕尺寸
+- 🚀 基于 Vite 的极速开发体验
+- 📦 组件自动按需引入
+- 🎨 可配置的主题定制
+- 🔒 TypeScript 类型安全
+- 📊 状态管理解决方案
+- 🌐 灵活的网络请求封装
 
 ## 技术栈
 - Vue 3.5
@@ -66,13 +78,23 @@ pnpm build
 pnpm preview
 ```
 
-## 关于 rem 适配
+## 移动端适配指南
 
+### Rem 适配方案
 本项目使用 `postcss-pxtorem` 插件自动将 px 转换为 rem。基准值为 37.5px（与 Vant UI 保持一致）。
 
-设计稿以 375px 宽度为基准，开发时可以直接按照设计稿标注的 px 值进行开发，插件会自动转换为 rem。
-
-如果某些样式不需要转换为 rem，可以添加 `.norem` 类名。
+- 设计稿基准：375px 宽度
+- 开发要点：
+  - 直接使用设计稿标注的 px 值进行开发
+  - 插件会自动按照 1:37.5 的比例转换为 rem
+  - 添加 `.norem` 类名可以禁用 px 转 rem
+  - 支持 media query 中的 px 转换
+  
+### 适配建议
+- 使用 vw、vh 处理边界场景
+- 使用 Vant 内置的响应式布局工具类
+- 避免使用固定宽度，推荐使用 flex 布局
+- 字体大小建议使用 rem 或 vw 单位
 
 ## TailwindCSS
 
@@ -92,8 +114,73 @@ pnpm preview
 - `.env.development` - 开发环境配置
 - `.env.production` - 生产环境配置
 
-## 依赖说明
+## 代码规范与最佳实践
 
-请确保使用 Node.js 18.x，pnpm 7.x 及以上版本。
+### 编码规范
+- 使用 TypeScript 的严格模式
+- 组件使用 `<script setup lang="ts">` 语法
+- 使用 ESLint + Prettier 保持代码风格统一
+- 遵循 Vue3 组合式 API 风格指南
 
----
+### 组件开发规范
+- 组件文件使用 PascalCase 命名
+- Props 必须指定类型和默认值
+- 使用 `defineEmits` 声明事件
+- 组合式函数（Composables）放置在 `hooks` 目录
+
+### Git 提交规范
+提交信息格式：`<type>(<scope>): <subject>`
+- type: feat, fix, docs, style, refactor, test, chore
+- scope: 影响范围
+- subject: 简短描述
+
+示例：
+```bash
+git commit -m "feat(login): 添加微信登录功能"
+git commit -m "fix(ui): 修复按钮样式问题"
+```
+
+### 项目发布流程
+1. 更新版本号
+2. 生成更新日志
+3. 执行构建
+4. 执行测试
+5. 发布生产环境
+
+## 常见问题
+
+### 开发相关
+1. 如何添加新页面？
+   - 在 `views` 目录创建页面组件
+   - 在 `router/modules` 添加路由配置
+   - 更新 `router/index.ts`
+
+2. 如何处理环境变量？
+   - 开发环境：`.env.development`
+   - 生产环境：`.env.production`
+   - 命名规则：必须以 `VITE_` 开头
+
+3. 网络请求最佳实践
+   - 统一使用 `api` 目录下的请求函数
+   - 处理错误响应
+   - 添加请求缓存
+   - 使用取消令牌
+
+### 性能优化
+- 路由懒加载
+- 组件按需引入
+- 图片资源优化
+- 开启 Gzip 压缩
+- 合理使用 keep-alive
+- 虚拟列表处理长列表
+
+## 更新日志
+
+### [1.0.0] - 2025-05-22
+- 🎉 初始版本发布
+- 📦 集成基础开发环境
+- 🎨 添加移动端适配方案
+- 🚀 配置自动化构建流程
+
+## 开源协议
+MIT License - 详见 LICENSE 文件

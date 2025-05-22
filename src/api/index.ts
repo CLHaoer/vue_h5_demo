@@ -11,3 +11,10 @@ export const login = (params: any) => {
 export const getUserinfo = (params?: any) => {
   return get<any>('/api/getUserinfo', params)
 }
+
+// 获取图片列表
+export const getImageList = (params?: { page: number, limit: number }) => {
+  return get<any[]>('/v2/list', params, {
+    baseURL: 'https://picsum.photos'
+  })
+}

@@ -29,6 +29,7 @@ declare module 'vue' {
     VanMpty: typeof import('vant/es')['Mpty']
     VanNavBar: typeof import('vant/es')['NavBar']
     VanPopup: typeof import('vant/es')['Popup']
+    VanPullRefresh: typeof import('vant/es')['PullRefresh']
     VanSearch: typeof import('vant/es')['Search']
     VanSwipe: typeof import('vant/es')['Swipe']
     VanSwipeCell: typeof import('vant/es')['SwipeCell']
@@ -38,6 +39,8 @@ declare module 'vue' {
     VanSwitch: typeof import('vant/es')['Switch']
     VanTabbar: typeof import('vant/es')['Tabbar']
     VanTabbarItem: typeof import('vant/es')['TabbarItem']
+    VanUploader: typeof import('vant/es')['Uploader']
     WaterFall: typeof import('./../components/waterFall.vue')['default']
+    WaterFall1: typeof import('./../components/waterFall1.vue')['default']
   }
 }

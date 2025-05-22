@@ -1,6 +1,6 @@
 import { createApp, h, type App } from 'vue'
 import ScanQrCode from './ScanQrCode.vue'
-import router from '@/router'
+import { loadPlugins } from '@/main'
 
 // 扫码配置选项接口
 export interface ScanOptions {
@@ -95,7 +95,7 @@ function createScanQrInstance(options: ScanOptions = {}): QrCodeInstance {
   })
   
   // 挂载实例
-  const appInstance = instance.use(router).mount(container)
+  const appInstance = loadPlugins(instance).mount(container)
   
   // 创建控制方法
   const qrInstance: QrCodeInstance = {
