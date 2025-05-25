@@ -8,7 +8,6 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     FixedPlaceholder: typeof import('./../components/fixedPlaceholder.vue')['default']
-    HelloWorld: typeof import('./../components/HelloWorld.vue')['default']
     Layout: typeof import('./../layout/index.vue')['default']
     Navbar: typeof import('./../layout/components/Navbar.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
@@ -26,21 +25,15 @@ declare module 'vue' {
     VanImage: typeof import('vant/es')['Image']
     VanList: typeof import('vant/es')['List']
     VanLoading: typeof import('vant/es')['Loading']
-    VanMpty: typeof import('vant/es')['Mpty']
     VanNavBar: typeof import('vant/es')['NavBar']
     VanPopup: typeof import('vant/es')['Popup']
     VanPullRefresh: typeof import('vant/es')['PullRefresh']
     VanSearch: typeof import('vant/es')['Search']
-    VanSwipe: typeof import('vant/es')['Swipe']
     VanSwipeCell: typeof import('vant/es')['SwipeCell']
-    VanSwipeItem: typeof import('vant/es')['SwipeItem']
-    VanSwiper: typeof import('vant/es')['Swiper']
-    VanSwiperItem: typeof import('vant/es')['SwiperItem']
     VanSwitch: typeof import('vant/es')['Switch']
     VanTabbar: typeof import('vant/es')['Tabbar']
     VanTabbarItem: typeof import('vant/es')['TabbarItem']
     VanUploader: typeof import('vant/es')['Uploader']
     WaterFall: typeof import('./../components/waterFall.vue')['default']
-    WaterFall1: typeof import('./../components/waterFall1.vue')['default']
   }
 }
