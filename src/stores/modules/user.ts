@@ -42,7 +42,7 @@ export const useUserStore = defineStore('user', () => {
   }
 
   // 模拟登录
-  const login = async (username: string, password: string): Promise<boolean> => {
+  const login = async (username: string): Promise<boolean> => {
     try {
       // 这里应该调用实际的登录 API
       // 此处仅做演示

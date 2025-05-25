@@ -242,7 +242,7 @@ function startJsQrScanning() {
     const imageData = ctx.value!.getImageData(0, 0, props.scanWidth, props.scanHeight);
     Worker.postMessage({ imageData, }, [imageData.data.buffer])
     Worker.onmessage = (event: MessageEvent) => {
-      const { error, data } = event.data
+      const { data } = event.data
       if (data) {
         console.log('识别到二维码：', data);
         stopScan()

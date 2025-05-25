@@ -31,8 +31,6 @@ const handleScan = async () => {
 const fileList = shallowRef([])
 const beforeRead:UploaderBeforeRead = (file)=>{
   if(!Array.isArray(file)){
-    const reader = new FileReader()
-    const docxContainer = document.createElement('div')
     const options = {
       useBase64URL: true,
       renderEndnotes: false,
